@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shadow Lotus Dodge</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:#05010d;
+    font-family:Arial, sans-serif;
+    color:white;
+    text-align:center;
+    overflow:hidden;
+}
+
+#logo{
+    margin:15px 0;
+    font-size:30px;
+    font-weight:900;
+    letter-spacing:3px;
+    color:#e3c4ff;
+
+    text-shadow:
+    0 0 10px #c86bff,
+    0 0 25px #8a2be2,
+    0 0 60px #8a2be2;
+}
+
+#hud{
+    width:360px;
+    margin:auto auto 10px;
+
+    display:flex;
+    justify-content:space-between;
+
+    padding:12px 15px;
+
+    background:rgba(255,255,255,.05);
+
+    backdrop-filter:blur(10px);
+
+    border-radius:15px;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    box-shadow:
+    0 0 15px rgba(138,43,226,.35);
+}
+
+#game{
+    width:360px;
+    height:600px;
+
+    margin:auto;
+
+    position:relative;
+    overflow:hidden;
+
+    border-radius:20px;
+
+    background:
+    linear-gradient(
+        rgba(5,0,20,.60),
+        rgba(0,0,0,.90)
+    ),
+    url("https://images.unsplash.com/photo-1519608487953-e999c86e7455?q=80&w=1200");
+
+    background-size:cover;
+    background-position:center;
+
+    border:2px solid #8a2be2;
+
+    box-shadow:
+    0 0 20px #8a2be2,
+    0 0 50px rgba(138,43,226,.4);
+}
+
+/* PARTICLES */
+
+.particles{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    opacity:.45;
+
+    background-image:
+    radial-gradient(#d66cff 1px, transparent 2px);
+
+    background-size:40px 40px;
+
+    animation:floatParticles 18s linear infinite;
+}
+
+@keyframes floatParticles{
+    from{
+        transform:translateY(0);
+    }
+    to{
+        transform:translateY(-600px);
+    }
+}
+
+/* PLAYER */
+
+#player{
+    position:absolute;
+
+    bottom:25px;
+    left:160px;
+
+    width:50px;
+    height:50px;
+
+    border-radius:50%;
+
+    background:
+    radial-gradient(
+        circle,
+        #ffd6ff,
+        #d65cff,
+        #5a00ff
+    );
+
+    box-shadow:
+    0 0 15px #d65cff,
+    0 0 40px #8a2be2,
+    0 0 80px #8a2be2;
+
+    z-index:5;
+}
+
+/* LOTUS SYMBOL */
+
+#player::before{
+    content:"✿";
+
+    position:absolute;
+    inset:0;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    color:white;
+    font-size:22px;
+    font-weight:bold;
+}
+
+/* ENEMIES */
+
+.block{
+    position:absolute;
+
+    width:46px;
+    height:46px;
+
+    border-radius:12px;
+
+    background:
+    linear-gradient(
+        135deg,
+        #050505,
+        #24003d,
+        #6d00ff
+    );
+
+    border:1px solid #d98fff;
+
+    box-shadow:
+    0 0 15px #8a2be2,
+    0 0 35px rgba(138,43,226,.7);
+}
+
+.block::before{
+    content:"◈";
+
+    position:absolute;
+    inset:0;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    color:#f3d6ff;
+    font-size:20px;
+}
+
+/* MENU */
+
+.overlay{
+    position:absolute;
+    inset:0;
+
+    background:
+    linear-gradient(
+        rgba(0,0,0,.85),
+        rgba(35,0,70,.95)
+    );
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+
+    z-index:100;
+}
+
+.overlay h2{
+    margin-bottom:15px;
+
+    color:#f0d4ff;
+
+    text-shadow:
+    0 0 10px #d65cff;
+}
+
+.overlay p{
+    margin-bottom:15px;
+}
+
+button{
+    border:none;
+
+    padding:12px 28px;
+
+    border-radius:25px;
+
+    font-size:18px;
+    font-weight:bold;
+
+    cursor:pointer;
+
+    color:white;
+
+    background:
+    linear-gradient(
+        135deg,
+        #ff66ff,
+        #8a2be2
+    );
+
+    box-shadow:
+    0 0 20px #b266ff;
+}
+
+button:active{
+    transform:scale(.95);
+}
+</style>
+</head>
+<body>
+
+<div id="logo">SHADOW LOTUS DODGE</div>
+
+<div id="hud">
+    <div>Score: <span id="score">0</span></div>
+    <div>High: <span id="high">0</span></div>
+</div>
+
+<div id="game">
+
+    <div class="particles"></div>
+
+    <div id="menu" class="overlay">
+        <h2>🌸 SHADOW LOTUS 🌸</h2>
+        <p>Dodge the Dark Spirits <u>PIB</u> </p>
+        <button id="startBtn">PLAY</button>
+    </div>
+
+    <div id="gameOver" class="overlay" style="display:none;">
+        <h2>GAME OVER</h2>
+        <p>Score: <span id="finalScore">0</span></p>
+        <button id="restartBtn">RESTART</button>
+    </div>
+
+    <div id="player"></div>
+
+</div>
+
+<script>
+
+const game=document.getElementById("game");
+const player=document.getElementById("player");
+
+const scoreEl=document.getElementById("score");
+const highEl=document.getElementById("high");
+
+const menu=document.getElementById("menu");
+const gameOver=document.getElementById("gameOver");
+
+const finalScore=document.getElementById("finalScore");
+
+const startBtn=document.getElementById("startBtn");
+const restartBtn=document.getElementById("restartBtn");
+
+let lanes=[60,160,260];
+
+let lane=1;
+let score=0;
+let speed=4;
+
+let blocks=[];
+
+let running=false;
+let dragging=false;
+
+let high=localStorage.shadowLotusHigh || 0;
+
+highEl.innerText=high;
+
+startBtn.onclick=startGame;
+restartBtn.onclick=startGame;
+
+function startGame(){
+
+    blocks.forEach(b=>b.remove());
+
+    blocks=[];
+
+    score=0;
+    speed=4;
+    lane=1;
+
+    player.style.left=lanes[lane]+"px";
+
+    scoreEl.innerText=0;
+
+    menu.style.display="none";
+    gameOver.style.display="none";
+
+    running=true;
+}
+
+setInterval(()=>{
+
+    if(!running) return;
+
+    const block=document.createElement("div");
+
+    block.className="block";
+
+    block.style.left=
+    lanes[Math.floor(Math.random()*3)]+"px";
+
+    block.style.top="-60px";
+
+    game.appendChild(block);
+
+    blocks.push(block);
+
+},700);
+
+function hit(a,b){
+
+    let r1=a.getBoundingClientRect();
+    let r2=b.getBoundingClientRect();
+
+    return !(
+        r1.bottom<r2.top ||
+        r1.top>r2.bottom ||
+        r1.right<r2.left ||
+        r1.left>r2.right
+    );
+}
+
+function endGame(){
+
+    running=false;
+
+    if(score>high){
+        high=score;
+        localStorage.shadowLotusHigh=high;
+    }
+
+    highEl.innerText=high;
+
+    finalScore.innerText=score;
+
+    gameOver.style.display="flex";
+}
+
+function loop(){
+
+    if(running){
+
+        blocks.forEach((b,i)=>{
+
+            b.style.top=
+            b.offsetTop+speed+"px";
+
+            if(hit(player,b)){
+                endGame();
+            }
+
+            if(b.offsetTop>600){
+
+                b.remove();
+
+                blocks.splice(i,1);
+
+                score++;
+
+                scoreEl.innerText=score;
+
+                speed=4+Math.floor(score/8);
+            }
+        });
+    }
+
+    requestAnimationFrame(loop);
+}
+
+loop();
+
+function movePlayer(x){
+
+    let rect=game.getBoundingClientRect();
+
+    let rel=x-rect.left;
+
+    if(rel<120){
+        lane=0;
+    }
+    else if(rel<240){
+        lane=1;
+    }
+    else{
+        lane=2;
+    }
+
+    player.style.left=
+    lanes[lane]+"px";
+
+    player.animate(
+    [
+        {
+            transform:"scale(1.25)"
+        },
+        {
+            transform:"scale(1)"
+        }
+    ],
+    {
+        duration:180
+    });
+}
+
+/* TOUCH */
+
+game.addEventListener("touchstart",()=>{
+    dragging=true;
+});
+
+game.addEventListener("touchmove",(e)=>{
+
+    if(!running || !dragging) return;
+
+    movePlayer(
+        e.touches[0].clientX
+    );
+});
+
+game.addEventListener("touchend",()=>{
+    dragging=false;
+});
+
+/* MOUSE */
+
+game.addEventListener("mousedown",()=>{
+    dragging=true;
+});
+
+game.addEventListener("mousemove",(e)=>{
+
+    if(!running || !dragging) return;
+
+    movePlayer(e.clientX);
+});
+
+game.addEventListener("mouseup",()=>{
+    dragging=false;
+});
+
+</script>
+
+</body>
+</html>
